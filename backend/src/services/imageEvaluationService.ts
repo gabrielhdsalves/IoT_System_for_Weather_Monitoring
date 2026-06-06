@@ -1,16 +1,14 @@
 import { spawn } from "child_process";
 import path from "path";
 import fs from "fs";
+import os from "os";
 
 const MODEL_PATH = path.join(__dirname, "../assets/cloud_type_xception.keras");
-const TEMP_DIR = path.join(__dirname, "../assets/temp");
+const TEMP_DIR = os.tmpdir();
 
 // Garante que os diretórios necessários existem
 if (!fs.existsSync(path.dirname(MODEL_PATH))) {
     fs.mkdirSync(path.dirname(MODEL_PATH), { recursive: true });
-}
-if (!fs.existsSync(TEMP_DIR)) {
-    fs.mkdirSync(TEMP_DIR, { recursive: true });
 }
 
 export interface PredictionResult {
