@@ -7,19 +7,23 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 try:
     import numpy as np
     import tensorflow as tf
-    from tensorflow.keras.layers import BatchNormalization
+    from tensorflow.keras.layers import BatchNormalization, Dense
+ 
+    def patch_layer(layer_class, keys_to_remove):
+        original_init = layer_class.__init__
+        def patched_init(self, *args, **kwargs):
+            for key in keys_to_remove:
+                kwargs.pop(key, None)
+            original_init(self, *args, **kwargs)
+        layer_class.__init__ = patched_init
 
-    original_init = BatchNormalization.__init__
-    def patched_init(self, *args, **kwargs):
-        kwargs.pop('renorm', None)
-        kwargs.pop('renorm_clipping', None)
-        kwargs.pop('renorm_momentum', None)
-        original_init(self, *args, **kwargs)
-    BatchNormalization.__init__ = patched_init
-
+    patch_layer(BatchNormalization, ['renorm', 'renorm_clipping', 'renorm_momentum'])
+    patch_layer(Dense, ['quantization_config'])
+ 
     try:
         import keras
-        keras.layers.BatchNormalization.__init__ = patched_init
+        patch_layer(keras.layers.BatchNormalization, ['renorm', 'renorm_clipping', 'renorm_momentum'])
+        patch_layer(keras.layers.Dense, ['quantization_config'])
     except ImportError:
         pass
 
