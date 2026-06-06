@@ -21,6 +21,10 @@ import "./routes/api/pws";
 import "./routes/api/imageEvaluation";
 
 // Inicialização do servidor
-app.listen(port, () => {
-  console.log(`[server]: Servidor está rodando em http://localhost:${port}`);
-});
+if (process.env.NODE_ENV !== "production") {
+  app.listen(port, () => {
+    console.log(`[server]: Servidor está rodando em http://localhost:${port}`);
+  });
+}
+
+export default app;
