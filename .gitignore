@@ -22,7 +22,6 @@ out/
 .env.*
 
 # Large model files
-*.keras
 *.h5
 *.onnx
 *.pb
