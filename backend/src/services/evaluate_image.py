@@ -7,7 +7,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 try:
     import numpy as np
     import tensorflow as tf
-    from tensorflow.keras.models import load_model
+    from tf_keras.models import load_model
     from PIL import Image
 except ImportError as e:
     print(json.dumps({
