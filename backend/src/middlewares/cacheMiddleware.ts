@@ -7,7 +7,9 @@ setInterval(() => {
   const agora = Date.now();
   for (const key in cacheStore) {
     if (agora - cacheStore[key].time > TTL) {
-      console.log(`[Cache Middleware]: Limpando rota expirada do cache: ${key}`);
+      console.log(
+        `[Cache Middleware]: Limpando rota expirada do cache: ${key}`,
+      );
       delete cacheStore[key];
     }
   }
@@ -26,7 +28,6 @@ export const routeCache = (req: Request, res: Response, next: NextFunction) => {
     delete cacheStore[key];
   }
 
-  // Sobrescreve res.json para armazenar a resposta no cache antes de enviar
   const originalJson = res.json;
   res.json = function (body): Response {
     cacheStore[key] = { body, time: Date.now() };

@@ -33,7 +33,6 @@ export async function fetchWeatherComData(
   return observations.map((obs: any) => {
     const metric = obs.metric || {};
 
-    // Extrações robustas suportando formatos com e sem médias (ex: IITAJUB5 vs IITAJU21)
     const tempVal = metric.tempAvg ?? metric.temp ?? obs.temp;
     const humVal = obs.humidityAvg ?? obs.humidity;
     const precipVal = metric.precipTotal ?? obs.precipTotal;
@@ -52,11 +51,11 @@ export async function fetchWeatherComData(
     const pressVal = metric.pressureMax ?? metric.pressure ?? obs.pressure;
 
     return {
-      time: obs.obsTimeUtc, // formato ISO: 2026-06-01T01:10:18Z
+      time: obs.obsTimeUtc, // formato: 2026-06-01T01:10:18Z
       temperature: typeof tempVal === "number" && !isNaN(tempVal) ? tempVal : 0,
       humidity: typeof humVal === "number" && !isNaN(humVal) ? humVal : 0,
       rain: typeof precipVal === "number" && !isNaN(precipVal) ? precipVal : 0,
-      precipitationProbability: 0, // Leituras reais de sensores não têm probabilidade de previsão
+      precipitationProbability: 0,
       precipitation:
         typeof precipVal === "number" && !isNaN(precipVal) ? precipVal : 0,
       weatherCode: codeVal,
