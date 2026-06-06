@@ -7,13 +7,21 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 try:
     import numpy as np
     import tensorflow as tf
-    from tf_keras.models import load_model
+    from tensorflow.keras.models import load_model
+    from tensorflow.keras.layers import BatchNormalization
     from PIL import Image
 except ImportError as e:
     print(json.dumps({
         "error": f"Bibliotecas Python necessárias não instaladas: {str(e)}. "
     }))
     sys.exit(1)
+
+class PatchedBatchNormalization(BatchNormalization):
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('renorm', None)
+        kwargs.pop('renorm_clipping', None)
+        kwargs.pop('renorm_momentum', None)
+        super().__init__(*args, **kwargs)
 
 def predict(img_path, model_path):
     if not os.path.exists(model_path):
@@ -24,7 +32,7 @@ def predict(img_path, model_path):
 
     try:
         # Carrega o modelo .keras
-        model = load_model(model_path)
+        model = load_model(model_path, custom_objects={"BatchNormalization": PatchedBatchNormalization})
 
         # Redimensiona a imagem conforme o esperado pelo modelo
         input_shape = model.input_shape
