@@ -5,7 +5,6 @@ import {
   Wind,
   CloudRain,
   Cloud,
-  Triangle,
 } from "lucide-react";
 import type { WeatherData } from "@/app/constants/mockWeather";
 
@@ -17,13 +16,10 @@ export default function OtherInfoCard({ currentWeather }: OtherInfoCardProps) {
   // 1. Umidade Relativa
   const humidityValue = `${currentWeather.humidity}%`;
   let humidityStatus: "dot" | "up" | "down" = "dot";
-  let humidityText = "Dentro do previsto";
   if (currentWeather.humidity > 75) {
     humidityStatus = "up";
-    humidityText = "Acima do previsto";
   } else if (currentWeather.humidity < 50) {
     humidityStatus = "down";
-    humidityText = "Abaixo do previsto";
   }
 
   // 2. Sensação Térmica
@@ -39,25 +35,19 @@ export default function OtherInfoCard({ currentWeather }: OtherInfoCardProps) {
   const feelsLikeValue = `${feelsLike.toFixed(1).replace(".", ",")}°C`;
   const diffTemp = feelsLike - tempVal;
   let feelsLikeStatus: "dot" | "up" | "down" = "dot";
-  let feelsLikeText = "Dentro do previsto";
   if (diffTemp > 0.1) {
     feelsLikeStatus = "up";
-    feelsLikeText = `+${diffTemp.toFixed(1).replace(".", ",")}°C acima`;
   } else if (diffTemp < -0.1) {
     feelsLikeStatus = "down";
-    feelsLikeText = `${diffTemp.toFixed(1).replace(".", ",")}°C abaixo`;
   }
 
   // 3. Pressão Atmosférica
   const pressureValue = `${currentWeather.pressure} hPa`;
   let pressureStatus: "dot" | "up" | "down" = "dot";
-  let pressureText = "Dentro do previsto";
   if (currentWeather.pressure > 1015) {
     pressureStatus = "up";
-    pressureText = "Acima do previsto";
   } else if (currentWeather.pressure < 1011) {
     pressureStatus = "down";
-    pressureText = "Abaixo do previsto";
   }
 
   // 4. Vento (Simulando a direção com base na localização/velocidade)
@@ -76,13 +66,10 @@ export default function OtherInfoCard({ currentWeather }: OtherInfoCardProps) {
   const windDir = getWindDirection(currentWeather.name);
   const windValue = `${currentWeather.windSpeed} km/h (${windDir})`;
   let windStatus: "dot" | "up" | "down" = "dot";
-  let windText = "Dentro do previsto";
   if (currentWeather.windSpeed > 15) {
     windStatus = "up";
-    windText = "Acima do previsto";
   } else if (currentWeather.windSpeed < 8) {
     windStatus = "down";
-    windText = "Abaixo do previsto";
   }
 
   // 5. Chuva Acumulada

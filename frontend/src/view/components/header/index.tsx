@@ -1,4 +1,4 @@
-import { Sun, Settings, Info } from "lucide-react";
+import { Sun, Info } from "lucide-react";
 import { NavLink } from "react-router";
 
 export default function Header() {
@@ -17,10 +17,10 @@ export default function Header() {
           </p>
         </div>
       </div>
-      <nav className="mt-4 flex flex-col items-center gap-4 border-t border-white/10 pt-3 md:ml-auto md:mt-0 md:flex-row md:gap-6 md:border-t-0 md:pt-0">
-        <NavLink 
-          to="/" 
-          className={({ isActive }) => 
+      <nav className="mt-4 flex flex-col items-center gap-4 border-t border-white/10 pt-3 md:mt-0 md:ml-auto md:flex-row md:gap-6 md:border-t-0 md:pt-0">
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
             `flex items-center gap-1.5 text-sm font-semibold transition-colors ${
               isActive ? "text-amber-300" : "text-white/70 hover:text-white"
             }`
@@ -30,9 +30,9 @@ export default function Header() {
           Previsão do Tempo
         </NavLink>
 
-        <NavLink 
-          to="/about" 
-          className={({ isActive }) => 
+        <NavLink
+          to="/about"
+          className={({ isActive }) =>
             `flex items-center gap-1.5 text-sm font-semibold transition-colors ${
               isActive ? "text-amber-300" : "text-white/70 hover:text-white"
             }`
