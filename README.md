@@ -5,8 +5,8 @@ Bem-vindo ao **Sistema IoT para Monitoramento Meteorológico**! Este projeto é 
 O ecossistema é composto por:
 *   **Sensor (ESP32 + DHT11):** Coleta temperatura e umidade e envia os dados.
 *   **Google Sheets (Banco de Dados / Apps Script):** Recebe os dados do sensor e serve como repositório simples e prático.
-*   **Backend (Node.js + Express + TypeScript):** Consome os dados da planilha e da API do *Weather.com* para integrar as medições locais e previsões.
-*   **Frontend (React + Vite + Tailwind CSS):** Uma interface moderna e interativa para visualizar as leituras e gráficos de monitoramento em tempo real.
+*   **Backend (Node.js + Express + TypeScript + Python):** Consome os dados da planilha e da API do *Weather.com* para integrar as medições locais e previsões, além de executar um script em Python para classificação de tipo de nuvem (Machine Learning).
+*   **Frontend (React + Vite + Tailwind CSS):** Uma interface moderna e interativa para visualizar as leituras, gráficos de monitoramento em tempo real e realizar o envio de imagens para classificação de nuvens.
 
 ---
 
@@ -14,7 +14,7 @@ O ecossistema é composto por:
 
 *   📂 `sensor/` - Código fonte para placas ESP32/ESP8266 na IDE do Arduino.
 *   📂 `googleSheets/` - Script JavaScript do Google Apps Script que processa requisições HTTP da planilha.
-*   📂 `backend/` - Servidor de API construído com Express e TypeScript.
+*   📂 `backend/` - Servidor de API construído com Express, TypeScript e Python para IA.
 *   📂 `frontend/` - Aplicação web feita em React (Vite) e estilizada com Tailwind CSS.
 
 ---
@@ -48,29 +48,63 @@ Siga os passos abaixo na ordem indicada para configurar e rodar cada parte do si
 ---
 
 ### 3. Servidor Backend
-1. Abra o terminal na pasta `backend`:
+
+Você pode executar o servidor backend localmente ou utilizando o Docker (recomendado, pois gerencia automaticamente as dependências de Node.js, Python e o download do modelo de Machine Learning).
+
+#### Opção A: Executando Localmente (Sem Docker)
+
+1. **Requisitos de Python:**
+   Certifique-se de ter o **Python 3.10+** instalado na sua máquina.
+2. Abra o terminal na pasta `backend`:
    ```bash
    cd backend
    ```
-2. Instale as dependências necessárias:
+3. Instale as dependências do Node.js e do Python:
    ```bash
+   # Dependências do Node.js
    npm install
+
+   # Dependências do Python (TensorFlow, Pillow, NumPy)
+   pip install -r requirements.txt
    ```
-3. Copie o template de variáveis de ambiente:
+4. Baixe o modelo de classificação de nuvens e coloque-o na pasta `backend/src/assets/`:
+   * **Nome do arquivo:** `cloud_type_xception.keras`
+   * **Link de Download:** [Baixar modelo cloud_type_xception.keras](https://drive.usercontent.google.com/download?id=10qGb5u7o1HDkZZW2hmYtf0OTxmWwsOa-&export=download&confirm=t)
+   * *(Opcional)* Você pode baixar via linha de comando:
+     ```bash
+     # No Linux/macOS ou Git Bash:
+     mkdir -p src/assets && curl -L -o src/assets/cloud_type_xception.keras "https://drive.usercontent.google.com/download?id=10qGb5u7o1HDkZZW2hmYtf0OTxmWwsOa-&export=download&confirm=t"
+     ```
+5. Copie o template de variáveis de ambiente e configure o `.env`:
    ```bash
    cp .env.example .env
    ```
-4. Abra o arquivo `.env` gerado e insira a URL do seu Google Apps Script (gerada no Passo 1) e a sua chave da API do Weather.com:
+   Abra o arquivo `.env` gerado e configure suas chaves e a rota do executável do Python (caso não esteja no PATH global como `python`):
    ```env
    PORT=3001
    GOOGLE="SUA_URL_DO_GOOGLE_APPS_SCRIPT"
    WEATHER_API_KEY="SUA_CHAVE_DO_WEATHER_API"
+   PYTHON_PATH="python" # ou o caminho completo para o executável do Python
    ```
-5. Inicie o servidor em modo de desenvolvimento:
+6. Inicie o servidor em modo de desenvolvimento:
    ```bash
    npm run dev
    ```
    O backend estará rodando em `http://localhost:3001`.
+
+#### Opção B: Executando com Docker (Recomendado)
+
+O Dockerfile já realiza a instalação do Node.js, Python, pacotes do `requirements.txt` e faz o download automático do modelo de Machine Learning de 229MB.
+
+1. Garanta que você configurou o arquivo `backend/.env` com as suas variáveis.
+2. Crie e execute o container a partir da pasta raiz do projeto:
+   ```bash
+   # Build da imagem
+   docker build -t iot-weather-backend ./backend
+
+   # Executar o container
+   docker run -p 3001:3001 --env-file ./backend/.env iot-weather-backend
+   ```
 
 ---
 
